@@ -34,7 +34,7 @@ export async function migrateGroup(mconfig: MigrationContext, group: GSGroup) {
     // Migrate posts
     await migratePosts(mconfig, group, community);
 
-}
+    }
 
 
 async function migratePosts(mconfig: MigrationContext, group: GSGroup, community: ASCCommunity) {
@@ -81,8 +81,8 @@ async function migratePosts(mconfig: MigrationContext, group: GSGroup, community
                 }
                 reactionMigrateProgressBar.setTotal(totalReactionCount);
             }
-            await migrateReactions(mconfig, reactionMigrateProgressBar, post, ascPost);
-            await migrateComments(mconfig, commentMigrateProgressBar, post, ascPost);
+            await migrateReactions(mconfig, reactionMigrateProgressBar, post, ascPost.data);
+            await migrateComments(mconfig, commentMigrateProgressBar, post, ascPost.data);
             postMigrateProgressBar.increment();
         }));
     }

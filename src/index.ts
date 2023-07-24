@@ -105,20 +105,24 @@ async function run() {
         const selectedGroupId = arr[arr.length - 1].slice(1, -1);
         selectedGroups = [groups.find(group => group.id === selectedGroupId) as GSGroup];
     }
-    logger.debug(`Migrating groups: ${selectedGroups.map(g => g.id)}\n`);
-    for (let selectedGroup of selectedGroups) {
-        logger.debug(`Migrating group: ${selectedGroup.id}`)
-        console.log(`Migrating group: ${selectedGroup.id}`)
-        await migrateGroup(migrationConfig, selectedGroup);
-        migrationConfig.multibar.stop();
-        migrationConfig.multibar = new cliProgress.MultiBar({
+    for (let iteration = 1; iteration <= 2; iteration++) {
+        logger.debug(`Iteration ${iteration}`);
+        logger.debug(`Migrating groups: ${selectedGroups.map(g => g.id)}\n`);
+        for (let selectedGroup of selectedGroups) {
+          logger.debug(`Migrating group: ${selectedGroup.id}`);
+          console.log(`Migrating group: ${selectedGroup.id}`);
+          await migrateGroup(migrationConfig, selectedGroup);
+          migrationConfig.multibar.stop();
+          migrationConfig.multibar = new cliProgress.MultiBar({
             format: '{title}|{bar}| {percentage}% || {value}/{total} {unit}',
             barCompleteChar: '\u2588',
             barIncompleteChar: '\u2591',
             hideCursor: true
-        }, cliProgress.Presets.shades_classic);
+          }, cliProgress.Presets.shades_classic);
+        }
+      }
     }
-}
+
 
 run().catch((error) => {
     logger.error((error as Error).stack);
