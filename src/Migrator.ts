@@ -34,7 +34,7 @@ export async function migrateGroup(mconfig: MigrationContext, group: GSGroup) {
     // Migrate posts
     await migratePosts(mconfig, group, community);
 
-    }
+}
 
 
 async function migratePosts(mconfig: MigrationContext, group: GSGroup, community: ASCCommunity) {
@@ -81,8 +81,8 @@ async function migratePosts(mconfig: MigrationContext, group: GSGroup, community
                 }
                 reactionMigrateProgressBar.setTotal(totalReactionCount);
             }
-            await migrateReactions(mconfig, reactionMigrateProgressBar, post, ascPost.data);
-            await migrateComments(mconfig, commentMigrateProgressBar, post, ascPost.data);
+            await migrateReactions(mconfig, reactionMigrateProgressBar, post, ascPost);
+            await migrateComments(mconfig, commentMigrateProgressBar, post, ascPost);
             postMigrateProgressBar.increment();
         }));
     }
@@ -124,9 +124,8 @@ async function migrateComments(mconfig: MigrationContext, commentMigrateProgress
                 mconfig.logger.debug("Skipping comment " + comment.id + " from post " + gsPost.id + " because it already exists in ASC\n");
             }
             else {
-                // Migrate non-admin comment
-                if(comment.author.user) await migrateComment(mconfig, comment.author.user, ascPost, comment);
-                else mconfig.logger.debug("Skipping comment " + comment.id + " from post " + gsPost.id + " because it is an admin comment\n");
+                // Migrate comment
+                await migrateComment(mconfig, comment.author.user, ascPost, comment);
             }
             commentMigrateProgressBar.increment();
         }
@@ -149,7 +148,7 @@ async function migrateMembers(mconfig: MigrationContext, group: GSGroup, communi
         const members = memberData.data;
         await Promise.all(members.map(async member => {
             // Migrate user
-            await migrateUser(mconfig, member.user);
+            const ascUser = await migrateUser(mconfig, member.user);
             userMigrateProgressBar.increment();
             const followers = await getUserFollowers(mconfig, member.user);
             userMigrateProgressBar.setTotal(userMigrateProgressBar.getTotal() + followers.length);
@@ -168,5 +167,3 @@ async function migrateMembers(mconfig: MigrationContext, group: GSGroup, communi
         userJoinProgressBar.increment(members.length);
     }
 }
-
-

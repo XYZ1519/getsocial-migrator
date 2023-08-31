@@ -23,6 +23,7 @@ npm run start
 ```
 
 The tool will then prompt you for the necessary details to facilitate migration:
+(Please consider that temporarily all groups that need to be migrated from GetSocial must have a description included)
 
 - `App ID`: App ID of GetSocial.
 - `API Key`: API Key of GetSocial.
