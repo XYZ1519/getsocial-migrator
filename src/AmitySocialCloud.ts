@@ -299,7 +299,7 @@ export async function getUserAccessToken(mconfig: ASCConfig, user: GSUser): Prom
 
     // Create session
     const sessionRequest = {
-        userId: user.id,
+        userId: user.auth_identities.email_address,
         deviceId: `getsocial-migrator-${user.id}`,
         deviceInfo: {
             kind: 'web',
@@ -334,10 +334,10 @@ export async function migrateUser(mconfig: MigrationContext, user: GSUser) {
         };
         // Update user information
         const userUpdateRequest = {
-            userId: user.id,
-            displayName: user.display_name,
+            userId: user.auth_identities.email_address,
+            displayName: user.auth_identities.username,
             roles: user.can_moderate ? ['moderator'] : [],
-            metadata: { ...user.public_properties, ...user.private_properties, [mconfig.authIdentity]: user.auth_identities[mconfig.authIdentity] },
+            metadata: { ...user.public_properties, ...user.private_properties, [mconfig.authIdentity]: user.auth_identities[mconfig.authIdentity] , id: user.id },
             avatarCustomUrl, avatarFileId
         };
         // console.log("Updating user with config: ", userUpdateRequest);

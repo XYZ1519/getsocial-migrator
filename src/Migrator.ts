@@ -158,12 +158,12 @@ async function migrateMembers(mconfig: MigrationContext, group: GSGroup, communi
                 userMigrateProgressBar.increment();
             }));
             await Promise.all(followers.map(async follower => {
-                await followUser(mconfig, member.user, follower.id);
+                await followUser(mconfig, member.user, follower.auth_identities.email_address);
                 userFollowProgressBar.increment();
             }));
 
         }));
-        await addUsersToCommunity(mconfig, community.communityId, members.map(member => member.user.id));
+        await addUsersToCommunity(mconfig, community.communityId, members.map(member => member.user.auth_identities.email_address));
         userJoinProgressBar.increment(members.length);
     }
 }
