@@ -306,7 +306,7 @@ export async function getUserAccessToken(mconfig: ASCConfig, user: GSUser): Prom
             model: 'getsocial-migrator',
             sdkVersion: '1.0'
         },
-        displayName: user.display_name
+        displayName: user.auth_identities.username
     };
     // console.log("Registering session with config: ", sessionRequest);
     const sessionResponse = await axios.post(`https://api.${mconfig.ascRegion}.amity.co/api/v3/sessions`,
@@ -344,7 +344,7 @@ export async function migrateUser(mconfig: MigrationContext, user: GSUser) {
 
         const userUpdateResponse = (await axios.put(`https://api.${mconfig.ascRegion}.amity.co/api/v3/users`,
             userUpdateRequest, { headers })).data as ASCResponse;
-        return userUpdateResponse.users.find(u => u.userId === user.id);
+        return userUpdateResponse.users.find(u => u.userId === user.auth_identities.username);
     }
     catch (err) {
 
